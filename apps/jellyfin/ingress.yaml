@@ -5,8 +5,10 @@ metadata:
   namespace: jellyfin
   annotations:
     cert-manager.io/cluster-issuer: "letsencrypt-production"
+    # Vi beholder denne for sikkerhets skyld, men spec-feltet under er viktigst
     kubernetes.io/ingress.class: "haproxy"
 spec:
+  ingressClassName: haproxy  # <--- DENNE MANGLET
   tls:
   - hosts:
     - jelly.hammers.no
