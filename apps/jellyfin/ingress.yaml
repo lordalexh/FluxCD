@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: jellyfin-ingress
+  namespace: jellyfin
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-production"
+    kubernetes.io/ingress.class: "haproxy"
+spec:
+  tls:
+  - hosts:
+    - jelly.hammers.no
+    secretName: jelly-hammers-no-tls
+  rules:
+  - host: jelly.hammers.no
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: jellyfin-external
+            port:
+              number: 80
