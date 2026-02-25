@@ -1,0 +1,58 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: authentik
+  namespace: authentik
+spec:
+  interval: 10m
+  chart:
+    spec:
+      chart: authentik
+      version: "2024.2.x" # Sjekk gjerne nyeste versjon, men denne er stabil
+      sourceRef:
+        kind: HelmRepository
+        name: authentik
+  values:
+    authentik:
+      # Dette er hemmeligheten Authentik bruker for å kryptere cookies. 
+      # Du kan bytte ut denne med Flux-variabel-trikset vi lærte tidligere hvis du vil skjule den fra Git!
+      secret_key: "veldig-hemmelig-nøkkel-bytt-meg-ut-senere" 
+      postgresql:
+        enabled: false # Vi deaktiverer den innebygde databasen...
+      redis:
+        enabled: true # ...men vi lar den spinne opp sin egen enkle Redis-cache.
+    
+    # Her kobler vi Authentik direkte til CNPG-databasen vår!
+    envValueFrom:
+      AUTHENTIK_POSTGRESQL__HOST:
+        secretKeyRef:
+          name: authentik-db-app
+          key: host
+      AUTHENTIK_POSTGRESQL__USER:
+        secretKeyRef:
+          name: authentik-db-app
+          key: username
+      AUTHENTIK_POSTGRESQL__NAME:
+        secretKeyRef:
+          name: authentik-db-app
+          key: dbname
+      AUTHENTIK_POSTGRESQL__PASSWORD:
+        secretKeyRef:
+          name: authentik-db-app
+          key: password
+
+    # Vi setter opp Ingress på samme måte som med Jellyfin
+    ingress:
+      enabled: true
+      ingressClassName: haproxy
+      annotations:
+        cert-manager.io/cluster-issuer: "letsencrypt-production"
+      hosts:
+        - host: auth.hammers.no
+          paths:
+            - path: /
+              pathType: Prefix
+      tls:
+        - secretName: auth-hammers-no-tls
+          hosts:
+            - auth.hammers.no

@@ -1,0 +1,10 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: authentik-db
+  namespace: authentik
+spec:
+  instances: 2 # Vi kjører 2 kopier av databasen for High Availability!
+  storage:
+    size: 5Gi
+    storageClass: longhorn
