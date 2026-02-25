@@ -1,0 +1,18 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: cnpg
+  namespace: cnpg-system
+spec:
+  interval: 10m
+  chart:
+    spec:
+      chart: cloudnative-pg
+      version: "0.22.x" # Uses the latest 0.22 version
+      sourceRef:
+        kind: HelmRepository
+        name: cnpg
+  install:
+    crds: CreateReplace
+  upgrade:
+    crds: CreateReplace
