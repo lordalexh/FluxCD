@@ -16,7 +16,6 @@ spec:
     authentik:
       secret_key: "veldig-hemmelig-nøkkel-bytt-meg-ut-senere" 
     
-    # Disse må ligge her ute!
     postgresql:
       enabled: false 
 
@@ -25,6 +24,27 @@ spec:
       architecture: standalone
       image:
         tag: "latest"
+    
+    server:
+      replicas: 2
+      ingress:
+        enabled: true
+        ingressClassName: haproxy
+        annotations:
+          cert-manager.io/cluster-issuer: "letsencrypt-production"
+        hosts:
+          - auth.hammers.no
+        paths:
+          - /
+        pathType: Prefix
+        tls:
+          - secretName: auth-hammers-no-tls
+            hosts:
+              - auth.hammers.no
+
+    # Worker må ligge her, helt ute på linje med server!
+    worker:
+      replicas: 2
     
     global:
       env:
@@ -48,19 +68,3 @@ spec:
             secretKeyRef:
               name: authentik-db-app
               key: password
-
-    server:
-      ingress:
-        enabled: true
-        ingressClassName: haproxy
-        annotations:
-          cert-manager.io/cluster-issuer: "letsencrypt-production"
-        hosts:
-          - auth.hammers.no
-        paths:
-          - /
-        pathType: Prefix
-        tls:
-          - secretName: auth-hammers-no-tls
-            hosts:
-              - auth.hammers.no
