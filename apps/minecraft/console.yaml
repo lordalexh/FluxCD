@@ -15,12 +15,12 @@ spec:
     spec:
       containers:
       - name: console
-        image: rcon-web-admin/rcon-web-admin:latest
+        image: itzg/rcon-web-admin:latest # Dette bildet finnes garantert
         ports:
         - containerPort: 4326
         env:
         - name: RCON_HOST
-          value: "minecraft"
+          value: "minecraft" # Navnet på servicen vi så i din 'kubectl get svc'
         - name: RCON_PORT
           value: "25575"
         - name: RCON_PASSWORD
