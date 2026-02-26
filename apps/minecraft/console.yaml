@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: minecraft-console
+  namespace: minecraft
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: minecraft-console
+  template:
+    metadata:
+      labels:
+        app: minecraft-console
+    spec:
+      containers:
+      - name: console
+        image: itzg/rcon-web-admin
+        ports:
+        - containerPort: 4326
+        env:
+        - name: RCON_HOST
+          value: "minecraft"
+        - name: RCON_PORT
+          value: "25575"
+        - name: RCON_PASSWORD
+          value: "minecraft"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: minecraft-console
+  namespace: minecraft
+spec:
+  selector:
+    app: minecraft-console
+  ports:
+  - port: 80
+    targetPort: 4326
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: minecraft-console
+  namespace: minecraft
+  annotations:
+    # Bruker samme cert-manager som authentik
+    cert-manager.io/cluster-issuer: "letsencrypt-production"
+spec:
+  ingressClassName: haproxy # Samme som authentik
+  rules:
+  - host: mc.hammers.no # Bytt til ditt ønskede domene
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: minecraft-console
+            port:
+              number: 80
+  tls:
+  - hosts:
+    - mc-console.hammers.no
+    secretName: mc-console-tls

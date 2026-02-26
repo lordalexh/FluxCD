@@ -20,6 +20,10 @@ spec:
       difficulty: "easy"
       serviceType: "LoadBalancer" # Endret fra ClusterIP for MetalLB
       servicePort: 25565
+      rcon:
+        enabled: true
+        password: "minecraft" # BYTT UT DETTE!
+        serviceType: ClusterIP
 
     persistence:
       storageClass: "longhorn" # Settes her for Longhorn-støtte
