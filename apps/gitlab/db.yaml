@@ -4,7 +4,7 @@ metadata:
   name: gitlab-db
   namespace: gitlab
 spec:
-  instances: 2
+  instances: 1
   storage:
     storageClass: longhorn
     size: 15Gi
