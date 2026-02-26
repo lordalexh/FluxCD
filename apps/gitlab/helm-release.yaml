@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       chart: gitlab
-      version: "8.9.x"
+      version: "9.9.x"
       sourceRef:
         kind: HelmRepository
         name: gitlab
