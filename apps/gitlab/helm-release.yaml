@@ -73,3 +73,28 @@ spec:
         persistence:
           storageClass: "longhorn"
           size: 10Gi
+      # --- NY SEKSJON STARTER HER ---
+      webservice:
+        resources:
+          requests:
+            cpu: 500m
+            memory: 2Gi
+          limits:
+            cpu: 1500m
+            memory: 4Gi
+        livenessProbe:
+          initialDelaySeconds: 600 # 10 minutter før den i det hele tatt sjekker
+          periodSeconds: 30
+          failureThreshold: 20
+        readinessProbe:
+          initialDelaySeconds: 300
+          periodSeconds: 10
+          failureThreshold: 30
+      sidekiq:
+        resources:
+          requests:
+            cpu: 200m
+            memory: 1Gi
+          limits:
+            cpu: 1000m
+            memory: 2Gi
