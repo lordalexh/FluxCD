@@ -18,11 +18,11 @@ spec:
       repository: docker.io/itzg/rcon
     
     rconWeb:
-      # ENDRE DENNE LINJEN:
-      rconHost: "minecraft-rcon" # Peik på rcon-servicen
-      rconPort: 25575 # Standard RCON-port
-      rconPassword: "minecraft" 
-      password: "admin" 
+      isAdmin: true # GJØR DENNE TRUE: Dette gir admin-tilgang i web-UI-et
+      rconHost: "minecraft-rcon" # BRUK DENNE: Navnet på RCON-tjenesten din
+      rconPort: 25575
+      rconPassword: "minecraft" # Må matche rcon.password i minecraft-fila
+      password: "admin" # Passordet du bruker for å logge inn på nettsiden
       game: minecraft
     
     ingress:
