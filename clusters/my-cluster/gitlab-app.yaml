@@ -11,6 +11,7 @@ spec:
     kind: GitRepository
     name: flux-system
   dependsOn:
-    - name: haproxy-infra
-    - name: longhorn-infra
-    - name: cert-manager-infra
+    - name: haproxy-layer
+    - name: longhorn-layer
+    - name: cert-manager-layer
+    - name: cnpg-layer
