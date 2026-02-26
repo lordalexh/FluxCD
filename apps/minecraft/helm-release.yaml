@@ -39,6 +39,7 @@ spec:
 
     minecraftServer:
       motd: "A simple MC Server"
+      memory: "3G"
       eula: true
       version: "LATEST"
       type: "PAPER"
@@ -84,3 +85,4 @@ spec:
         cpu: 1
       limits:
         memory: "4Gi"
+        cpu: "2"
