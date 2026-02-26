@@ -77,7 +77,7 @@ spec:
       storageClass: "longhorn"
       dataDir:
         enabled: true
-        Size: "20Gi" # Bruker stor S som i chart-definisjonen
+        Size: "10Gi" # Bruker stor S som i chart-definisjonen
 
     resources:
       requests:
