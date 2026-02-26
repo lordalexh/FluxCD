@@ -4,7 +4,15 @@ metadata:
   name: authentik-db
   namespace: authentik
 spec:
-  instances: 1 # Vi kjører 2 kopier av databasen for High Availability!
+  instances: 1 # (Endre til 2 hvis du faktisk vil ha High Availability!)
   storage:
     size: 5Gi
     storageClass: longhorn
+  # Her er magien som gir databasen nok minne til å overleve oppstarten:
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "200m"
+    limits:
+      memory: "1Gi" # Gir databasen god plass til Authentiks storspørringer
+      cpu: "1000m"
