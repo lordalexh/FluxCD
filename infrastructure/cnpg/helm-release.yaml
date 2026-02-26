@@ -8,7 +8,7 @@ spec:
   chart:
     spec:
       chart: cloudnative-pg
-      version: "0.22.x" # Uses the latest 0.22 version
+      version: "0.27.x" # Uses the latest 0.22 version
       sourceRef:
         kind: HelmRepository
         name: cnpg
@@ -16,3 +16,10 @@ spec:
     crds: CreateReplace
   upgrade:
     crds: CreateReplace
+  # Her starter verdiene som sendes til Helm-chartet:
+  values:
+    resources:
+      limits:
+        memory: 1024Mi
+      requests:
+        memory: 1024Mi
