@@ -8,24 +8,26 @@ spec:
   chart:
     spec:
       chart: rcon-web-admin
-      version: "1.1.0" # Fra Chart.yaml
+      version: "1.1.0"
       sourceRef:
         kind: HelmRepository
         name: minecraft
         namespace: minecraft
   values:
     image:
-      repository: docker.io/itzg/rcon # Riktig image fra itzg
+      repository: docker.io/itzg/rcon
     
     rconWeb:
-      rconHost: "minecraft" # Navnet på din minecraft-service
-      rconPassword: "minecraft" # Må matche passordet i din minecraft helm-release
-      password: "admin" # Dette er passordet for å logge inn på web-siden
+      # ENDRE DENNE LINJEN:
+      rconHost: "minecraft-rcon" # Peik på rcon-servicen
+      rconPort: 25575 # Standard RCON-port
+      rconPassword: "minecraft" 
+      password: "admin" 
       game: minecraft
     
     ingress:
       enabled: true
-      className: "haproxy" # Samme som authentik
+      className: "haproxy"
       annotations:
         cert-manager.io/cluster-issuer: "letsencrypt-production"
       host: mc.hammers.no
