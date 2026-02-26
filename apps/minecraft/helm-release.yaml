@@ -12,7 +12,9 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: minecraft
+        namespace: minecraft
   values:
+    # 1. Sidecar ligger på rot av values (Riktig)
     sidecarContainers:
       - name: filebrowser
         image: filebrowser/filebrowser:v2.27.0
@@ -21,58 +23,58 @@ spec:
         securityContext:
           runAsUser: 1000
           runAsGroup: 3000
-          # Tillater skriving til de monterte volumene selv om root er låst
           readOnlyRootFilesystem: true 
         volumeMounts:
-          - name: datadir # Navnet på volumet fra Minecraft-charten
+          - name: datadir # Navnet på volumet definert i charten
             mountPath: /srv
         env:
           - name: FB_BASEURL
             value: "/"
-          # DISSE TO LINJENE FIKSER FEILMELDINGEN:
           - name: FB_DATABASE
-            value: "/srv/filebrowser.db" # Flytter databasen til den skrivbare disken
+            value: "/srv/filebrowser.db" # Lagrer databasen på den skrivbare Minecraft-disken
           - name: FB_ROOT
-            value: "/srv" # Setter startmappen for filbehandleren
+            value: "/srv"
 
-    # Legg til denne blokka for å lage Ingress og Service
-    extraPorts:
-      - name: filebrowser
-        containerPort: 8080
-        service:
-          enabled: true
-          port: 80
-        ingress:
-          enabled: true
-          ingressClassName: "haproxy" # Bruker din eksisterende ingress
-          annotations:
-            cert-manager.io/cluster-issuer: "letsencrypt-production"
-          hosts:
-            - name: mc-files.hammers.no # Nytt domene for filbehandling
-              path: /
-          tls:
-            - secretName: mc-files-tls
-              hosts:
-                - mc-files.hammers.no
     minecraftServer:
       motd: "A simple MC Server"
       eula: true
       version: "LATEST"
       type: "PAPER"
       difficulty: "easy"
-      serviceType: "LoadBalancer" # Endret fra ClusterIP for MetalLB
+      serviceType: "LoadBalancer"
       servicePort: 25565
       externalTrafficPolicy: "Local"
+      
+      # 2. FLYTTET: extraPorts må ligge her for at Ingress skal virke
+      extraPorts:
+        - name: filebrowser
+          containerPort: 8080
+          service:
+            enabled: true
+            port: 80
+          ingress:
+            enabled: true
+            ingressClassName: "haproxy"
+            annotations:
+              cert-manager.io/cluster-issuer: "letsencrypt-production"
+            hosts:
+              - name: mc-files.hammers.no
+                path: /
+            tls:
+              - secretName: mc-files-tls
+                hosts:
+                  - mc-files.hammers.no
+      
       rcon:
         enabled: true
-        password: "minecraft" # BYTT UT DETTE!
+        password: "minecraft"
         serviceType: ClusterIP
 
     persistence:
-      storageClass: "longhorn" # Settes her for Longhorn-støtte
+      storageClass: "longhorn"
       dataDir:
         enabled: true
-        Size: "10Gi" # Merk stor S som i din referansefil
+        Size: "10Gi" # Bruker capital S som i chart-definisjonen
 
     resources:
       requests:
@@ -80,4 +82,3 @@ spec:
         cpu: 1
       limits:
         memory: "4Gi"
- 
