@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: console
-        image: itzg/rcon-web-admin
+        image: rcon-web-admin/rcon-web-admin:latest
         ports:
         - containerPort: 4326
         env:
