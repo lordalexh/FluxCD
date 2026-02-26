@@ -14,26 +14,28 @@ spec:
         name: minecraft
         namespace: minecraft
   values:
-    # 1. Sidecar ligger på rot av values (Riktig)
+    # Sidecar-oppsett for File Browser
     sidecarContainers:
       - name: filebrowser
         image: filebrowser/filebrowser:v2.27.0
         ports:
-          - containerPort: 8080
+          - containerPort: 80
         securityContext:
           runAsUser: 1000
           runAsGroup: 3000
           readOnlyRootFilesystem: true 
         volumeMounts:
-          - name: datadir # Navnet på volumet definert i charten
+          - name: datadir
             mountPath: /srv
         env:
           - name: FB_BASEURL
             value: "/"
           - name: FB_DATABASE
-            value: "/srv/filebrowser.db" # Lagrer databasen på den skrivbare Minecraft-disken
+            value: "/srv/filebrowser.db"
           - name: FB_ROOT
             value: "/srv"
+          - name: FB_PORT
+            value: "80"
 
     minecraftServer:
       motd: "A simple MC Server"
@@ -43,12 +45,12 @@ spec:
       difficulty: "easy"
       serviceType: "LoadBalancer"
       servicePort: 25565
-      externalTrafficPolicy: "Local"
+      externalTrafficPolicy: "Local" # Bevarer spillernes ekte IP-adresse
       
-      # 2. FLYTTET: extraPorts må ligge her for at Ingress skal virke
+      # Ingress og Service for File Browser må ligge under minecraftServer
       extraPorts:
         - name: filebrowser
-          containerPort: 8080
+          containerPort: 80
           service:
             enabled: true
             port: 80
@@ -67,14 +69,14 @@ spec:
       
       rcon:
         enabled: true
-        password: "minecraft"
+        password: "minecraft" # Husk at dette må matche i console.yaml
         serviceType: ClusterIP
 
     persistence:
       storageClass: "longhorn"
       dataDir:
         enabled: true
-        Size: "10Gi" # Bruker capital S som i chart-definisjonen
+        Size: "10Gi" # Bruker stor S som i chart-definisjonen
 
     resources:
       requests:
