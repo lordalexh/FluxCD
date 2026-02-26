@@ -24,7 +24,7 @@ spec:
       enabled: true
       architecture: standalone
       image:
-        tag: "7.2"
+        tag: "latest"
     
     global:
       env:
