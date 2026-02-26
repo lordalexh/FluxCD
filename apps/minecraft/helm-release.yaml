@@ -16,21 +16,16 @@ spec:
     minecraftServer:
       eula: true
       version: "LATEST"
-      type: "PAPER" # Anbefalt for ytelse og plugins, kan endres til "VANILLA"
+      type: "PAPER"
       difficulty: "easy"
-    
-    # Bruker Longhorn for å lagre verdenen din, slik som authentik-db
     persistence:
       data:
         enabled: true
         storageClass: longhorn
         size: 10Gi
-
-    # Siden Minecraft bruker TCP, eksponerer vi det via LoadBalancer (MetalLB)
     service:
       type: LoadBalancer
       port: 25565
-    
     resources:
       requests:
         memory: 2Gi
