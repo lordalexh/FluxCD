@@ -1,0 +1,69 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: gitlab
+  namespace: gitlab
+spec:
+  interval: 10m
+  timeout: 30m
+  chart:
+    spec:
+      chart: gitlab
+      version: "8.9.x"
+      sourceRef:
+        kind: HelmRepository
+        name: gitlab
+        namespace: flux-system
+  values:
+    global:
+      edition: ce
+      hosts:
+        domain: hammers.no
+      ingress:
+        configureCertmanager: false
+        class: haproxy
+        annotations:
+          cert-manager.io/cluster-issuer: "letsencrypt-production"
+      
+      # --- EKSTERN DATABASE (CNPG) ---
+      psql:
+        host: gitlab-db-rw # Tjenesten CNPG oppretter
+        port: 5432
+        username: gitlab
+        database: gitlab
+        password:
+          secret: gitlab-db-app # Secret CNPG oppretter automatisk
+          key: password
+          
+    # --- DEAKTIVER INNEBYGDE TING ---
+    installCertmanager: false
+    certmanager:
+      installCRDs: false
+      install: false
+    nginx-ingress:
+      enabled: false
+    prometheus:
+      install: false
+    gitlab-runner:
+      install: false
+      
+    # Slå av GitLabs egen PostgreSQL!
+    postgresql:
+      install: false
+
+    # --- LAGRING (Longhorn) ---
+    redis:
+      architecture: standalone
+      master:
+        persistence:
+          storageClass: "longhorn"
+          size: 2Gi
+    minio:
+      persistence:
+        storageClass: "longhorn"
+        size: 10Gi
+    gitlab:
+      gitaly:
+        persistence:
+          storageClass: "longhorn"
+          size: 10Gi

@@ -1,0 +1,14 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: gitlab-db
+  namespace: gitlab
+spec:
+  instances: 2 # HA! Hvis en node dør, tar den andre over
+  storage:
+    storageClass: longhorn
+    size: 15Gi
+  bootstrap:
+    initdb:
+      database: gitlab
+      owner: gitlab
