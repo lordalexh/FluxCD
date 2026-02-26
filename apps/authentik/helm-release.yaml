@@ -23,6 +23,8 @@ spec:
     redis:
       enabled: true
       architecture: standalone
+      image:
+        tag: "7.2"
     
     global:
       env:
