@@ -20,6 +20,7 @@ spec:
       difficulty: "easy"
       serviceType: "LoadBalancer" # Endret fra ClusterIP for MetalLB
       servicePort: 25565
+      externalTrafficPolicy: "Local"
       rcon:
         enabled: true
         password: "minecraft" # BYTT UT DETTE!
