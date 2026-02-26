@@ -1,66 +1,35 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
 metadata:
   name: minecraft-console
   namespace: minecraft
 spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: minecraft-console
-  template:
-    metadata:
-      labels:
-        app: minecraft-console
+  interval: 10m
+  chart:
     spec:
-      containers:
-      - name: console
-        # BRUK DETTE BILDET:
-        image: itzg/rcon-web-admin:latest
-        ports:
-        - containerPort: 4326
-        env:
-        - name: RCON_HOST
-          value: "minecraft"
-        - name: RCON_PORT
-          value: "25575"
-        - name: RCON_PASSWORD
-          value: "minecraft"
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: minecraft-console
-  namespace: minecraft
-spec:
-  selector:
-    app: minecraft-console
-  ports:
-  - port: 80
-    targetPort: 4326
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: minecraft-console
-  namespace: minecraft
-  annotations:
-    # Bruker samme cert-manager som authentik
-    cert-manager.io/cluster-issuer: "letsencrypt-production"
-spec:
-  ingressClassName: haproxy # Samme som authentik
-  rules:
-  - host: mc.hammers.no # Bytt til ditt ønskede domene
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: minecraft-console
-            port:
-              number: 80
-  tls:
-  - hosts:
-    - mc-console.hammers.no
-    secretName: mc-console-tls
+      chart: rcon-web-admin
+      version: "1.1.0" # Fra Chart.yaml
+      sourceRef:
+        kind: HelmRepository
+        name: minecraft
+        namespace: minecraft
+  values:
+    image:
+      repository: docker.io/itzg/rcon # Riktig image fra itzg
+    
+    rconWeb:
+      rconHost: "minecraft" # Navnet på din minecraft-service
+      rconPassword: "minecraft" # Må matche passordet i din minecraft helm-release
+      password: "admin" # Dette er passordet for å logge inn på web-siden
+      game: minecraft
+    
+    ingress:
+      enabled: true
+      className: "haproxy" # Samme som authentik
+      annotations:
+        cert-manager.io/cluster-issuer: "letsencrypt-production"
+      host: mc.hammers.no
+      tls:
+        - secretName: mc-console-tls
+          hosts:
+            - mc.hammers.no
