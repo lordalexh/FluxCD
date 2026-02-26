@@ -13,7 +13,42 @@ spec:
         kind: HelmRepository
         name: minecraft
   values:
+    sidecarContainers:
+      - name: filebrowser
+        image: filebrowser/filebrowser:v2.27.0
+        ports:
+          - containerPort: 8080
+        securityContext:
+          runAsUser: 1000 # Samme bruker som Minecraft for å kunne redigere filer
+          runAsGroup: 3000
+        volumeMounts:
+          - name: datadir # Navnet på Minecrafts interne volum
+            mountPath: /srv
+        env:
+          - name: FB_BASEURL
+            value: "/"
+
+    # Legg til denne blokka for å lage Ingress og Service
+    extraPorts:
+      - name: filebrowser
+        containerPort: 8080
+        service:
+          enabled: true
+          port: 80
+        ingress:
+          enabled: true
+          ingressClassName: "haproxy" # Bruker din eksisterende ingress
+          annotations:
+            cert-manager.io/cluster-issuer: "letsencrypt-production"
+          hosts:
+            - name: mc-files.hammers.no # Nytt domene for filbehandling
+              path: /
+          tls:
+            - secretName: mc-files-tls
+              hosts:
+                - mc-files.hammers.no
     minecraftServer:
+      motd: "A simple MC Server"
       eula: true
       version: "LATEST"
       type: "PAPER"
@@ -38,3 +73,4 @@ spec:
         cpu: 1
       limits:
         memory: "4Gi"
+ 
