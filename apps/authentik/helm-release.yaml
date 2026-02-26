@@ -15,10 +15,14 @@ spec:
   values:
     authentik:
       secret_key: "veldig-hemmelig-nøkkel-bytt-meg-ut-senere" 
-      postgresql:
-        enabled: false 
-      redis:
-        enabled: true 
+    
+    # Disse må ligge her ute!
+    postgresql:
+      enabled: false 
+
+    redis:
+      enabled: true
+      architecture: standalone
     
     global:
       env:
