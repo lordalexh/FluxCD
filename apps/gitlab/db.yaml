@@ -4,10 +4,12 @@ metadata:
   name: gitlab-db
   namespace: gitlab
 spec:
-  instances: 2 # HA! Hvis en node dør, tar den andre over
+  instances: 2
   storage:
     storageClass: longhorn
     size: 15Gi
+  # Dette gir operatøren lov til å fikse ting som krever høye rettigheter
+  enableSuperuserAccess: true 
   bootstrap:
     initdb:
       database: gitlab
