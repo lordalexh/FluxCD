@@ -19,14 +19,21 @@ spec:
         ports:
           - containerPort: 8080
         securityContext:
-          runAsUser: 1000 # Samme bruker som Minecraft for å kunne redigere filer
+          runAsUser: 1000
           runAsGroup: 3000
+          # Tillater skriving til de monterte volumene selv om root er låst
+          readOnlyRootFilesystem: true 
         volumeMounts:
-          - name: datadir # Navnet på Minecrafts interne volum
+          - name: datadir # Navnet på volumet fra Minecraft-charten
             mountPath: /srv
         env:
           - name: FB_BASEURL
             value: "/"
+          # DISSE TO LINJENE FIKSER FEILMELDINGEN:
+          - name: FB_DATABASE
+            value: "/srv/filebrowser.db" # Flytter databasen til den skrivbare disken
+          - name: FB_ROOT
+            value: "/srv" # Setter startmappen for filbehandleren
 
     # Legg til denne blokka for å lage Ingress og Service
     extraPorts:
