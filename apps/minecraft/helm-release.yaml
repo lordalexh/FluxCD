@@ -18,17 +18,18 @@ spec:
       version: "LATEST"
       type: "PAPER"
       difficulty: "easy"
+      serviceType: "LoadBalancer" # Endret fra ClusterIP for MetalLB
+      servicePort: 25565
+
     persistence:
-      data:
+      storageClass: "longhorn" # Settes her for Longhorn-støtte
+      dataDir:
         enabled: true
-        storageClass: longhorn
-        size: 10Gi
-    service:
-      type: LoadBalancer
-      port: 25565
+        Size: "10Gi" # Merk stor S som i din referansefil
+
     resources:
       requests:
-        memory: 2Gi
+        memory: "2Gi"
         cpu: 1
       limits:
-        memory: 4Gi
+        memory: "4Gi"
