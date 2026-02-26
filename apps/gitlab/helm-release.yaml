@@ -51,9 +51,15 @@ spec:
     postgresql:
       install: false
 
-    # --- LAGRING (Longhorn) ---
+# --- LAGRING (Longhorn) ---
     redis:
       architecture: standalone
+      # Fortell den at den må hente fra arkivet:
+      image:
+        repository: bitnamilegacy/redis
+      metrics:
+        image:
+          repository: bitnamilegacy/redis-exporter
       master:
         persistence:
           storageClass: "longhorn"
