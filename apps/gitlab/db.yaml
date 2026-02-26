@@ -8,9 +8,16 @@ spec:
   storage:
     storageClass: longhorn
     size: 15Gi
-  # Dette gir operatøren lov til å fikse ting som krever høye rettigheter
+  
+  # Dette er nøkkelen for at migrasjoner skal fungere med CNPG
   enableSuperuserAccess: true 
+
   bootstrap:
     initdb:
       database: gitlab
       owner: gitlab
+      # Installer utvidelsene GitLab krever
+      postInitApplicationSQL:
+        - CREATE EXTENSION IF NOT EXISTS pg_trgm;
+        - CREATE EXTENSION IF NOT EXISTS btree_gist;
+        - CREATE EXTENSION IF NOT EXISTS plpgsql;
