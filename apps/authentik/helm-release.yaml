@@ -26,7 +26,7 @@ spec:
         tag: "latest"
     
     server:
-      replicas: 3
+      replicas: 2
       ingress:
         enabled: true
         ingressClassName: haproxy
@@ -44,7 +44,7 @@ spec:
 
     # Worker må ligge her, helt ute på linje med server!
     worker:
-      replicas: 3
+      replicas: 2
     
     global:
       env:
